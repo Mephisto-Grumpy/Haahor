@@ -3,7 +3,7 @@
 -- ======================================================================================================
 -- FOR REVIEW TABLE
 CREATE OR REPLACE TRIGGER calculate_review_rating
-AFTER INSERT OR UPDATE ON Rating
+AFTER INSERT OR UPDATE OR DELETE ON RATING
 FOR EACH ROW
 DECLARE
     PRAGMA AUTONOMOUS_TRANSACTION;
@@ -19,18 +19,31 @@ BEGIN
 
     -- Calculate the average rating
     IF v_num_ratings > 0 THEN
-        v_avg_rating := v_total_rating / (v_num_ratings * 3); -- Assuming 3 rating categories
+        v_avg_rating := v_total_rating / (v_num_ratings * 3); -- Assuming 3 rating categories and a scale of 1 to 5 for each
     ELSE
         v_avg_rating := 0;
     END IF;
 
-    -- Update the Review table with the calculated average rating
-    UPDATE Review
-    SET RATING_SCORE = ROUND(v_avg_rating, 1)
-    WHERE REVIEW_ID = :NEW.REVIEW_ID;
+    -- Log calculated values
+    DBMS_OUTPUT.PUT_LINE('Review ID: ' || :NEW.REVIEW_ID || ', Total Rating: ' || v_total_rating || ', Num Ratings: ' || v_num_ratings || ', Avg Rating: ' || v_avg_rating);
 
-    -- Commit the changes in the autonomous transaction
-    COMMIT;
+    -- Update the Review table with the calculated average rating
+    BEGIN
+        UPDATE Review
+        SET RATING_SCORE = ROUND(v_avg_rating, 1)
+        WHERE REVIEW_ID = :NEW.REVIEW_ID;
+        COMMIT;
+        DBMS_OUTPUT.PUT_LINE('Rating updated successfully for REVIEW_ID: ' || :NEW.REVIEW_ID);
+    EXCEPTION
+        WHEN NO_DATA_FOUND THEN
+            DBMS_OUTPUT.PUT_LINE('No data found for REVIEW_ID: ' || :NEW.REVIEW_ID);
+        WHEN OTHERS THEN
+            DBMS_OUTPUT.PUT_LINE('Error updating rating for REVIEW_ID: ' || :NEW.REVIEW_ID);
+    END;
+
+EXCEPTION
+    WHEN OTHERS THEN
+        DBMS_OUTPUT.PUT_LINE('Trigger error for REVIEW_ID: ' || :NEW.REVIEW_ID);
 END;
 
 -- IF HAVE DATA IN TABLE
@@ -48,7 +61,7 @@ SET RATING_SCORE = ROUND(
 -- ======================================================================================================
 -- FOR DORMITORY TABLE
 CREATE OR REPLACE TRIGGER calculate_dormitory_rating
-AFTER INSERT OR UPDATE ON Review
+AFTER INSERT OR UPDATE OR DELETE ON Review
 FOR EACH ROW
 DECLARE
     PRAGMA AUTONOMOUS_TRANSACTION;
@@ -69,16 +82,25 @@ BEGIN
         v_avg_rating := 0;
     END IF;
 
-    -- Update the Dormitory table with the calculated average rating
-    UPDATE Dormitory
-    SET RATING_SCORE = ROUND(v_avg_rating, 1)
-    WHERE DORM_ID = :NEW.DORM_ID;
+    DBMS_OUTPUT.PUT_LINE('Dormitory ID: ' || :NEW.DORM_ID || ', Total Rating: ' || v_total_rating || ', Num Ratings: ' || v_num_ratings || ', Avg Rating: ' || v_avg_rating);
 
-    -- Commit the changes in the autonomous transaction
-    COMMIT;
+    -- Update the Dormitory table with the calculated average rating
+    BEGIN
+        UPDATE Dormitory
+        SET RATING_SCORE = ROUND(v_avg_rating, 1)
+        WHERE DORM_ID = :NEW.DORM_ID;
+        COMMIT;
+        DBMS_OUTPUT.PUT_LINE('Dormitory rating updated successfully for DORM_ID: ' || :NEW.DORM_ID);
+    EXCEPTION
+        WHEN NO_DATA_FOUND THEN
+            DBMS_OUTPUT.PUT_LINE('No data found for DORM_ID: ' || :NEW.DORM_ID);
+        WHEN OTHERS THEN
+            DBMS_OUTPUT.PUT_LINE('Error updating dormitory rating for DORM_ID: ' || :NEW.DORM_ID);
+    END;
+
 EXCEPTION
     WHEN OTHERS THEN
-        NULL; -- To handle exceptions gracefully
+        DBMS_OUTPUT.PUT_LINE('Trigger error for DORM_ID: ' || :NEW.DORM_ID);
 END;
 
 -- IF HAVE DATA IN TABLE
