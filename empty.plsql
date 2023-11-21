@@ -9,5 +9,3 @@ BEGIN
         DBMS_OUTPUT.PUT_LINE('Table is not empty');
     END IF;
 END;
-
-    
