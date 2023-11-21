@@ -63,47 +63,27 @@ CREATE OR REPLACE PROCEDURE insert_review_and_rating (
 )
 AS
     v_rating_id VARCHAR2(20);
-    v_review_id CHAR(10);
     v_random_number NUMBER;
-    v_total_rating NUMBER;
-    v_num_ratings NUMBER;
-    v_avg_rating FLOAT;
 BEGIN
-    IF p_review_id IS NOT NULL THEN
-        v_review_id := p_review_id;
-    ELSE
+    IF p_review_id IS NULL THEN
         -- Generate a new review ID if p_review_id is not provided
-        SELECT 'R' || LPAD(REVIEW_SEQ.NEXTVAL, 2, '0') INTO v_review_id FROM DUAL;
+        SELECT 'R' || LPAD(REVIEW_SEQ.NEXTVAL, 2, '0') INTO p_review_id FROM DUAL;
     END IF;
 
     -- Generating a random number for the rating ID
     v_random_number := TRUNC(DBMS_RANDOM.VALUE(1000, 10000));
-    v_rating_id := TRIM(v_review_id || '-' || TO_CHAR(v_random_number));
+    
+    -- Generate rating ID without space for all reviews
+    v_rating_id := p_review_id || '-' || TO_CHAR(v_random_number);
 
     BEGIN
-        INSERT INTO REVIEW (REVIEW_ID, USER_ID, DORM_ID, REVIEW_COMMENT) VALUES (v_review_id, p_user_id, p_dorm_id, p_review_comment);
+        INSERT INTO REVIEW (REVIEW_ID, USER_ID, DORM_ID, REVIEW_COMMENT)
+        VALUES (p_review_id, p_user_id, p_dorm_id, p_review_comment);
 
-        INSERT INTO RATING (RATING_ID, REVIEW_ID, CLEANLINESS_RATE, COMFORT_RATE, WORTHINESS_RATE) VALUES (v_rating_id, v_review_id, p_cleanliness, p_comfort, p_worthiness);
+        INSERT INTO RATING (RATING_ID, REVIEW_ID, CLEANLINESS_RATE, COMFORT_RATE, WORTHINESS_RATE)
+        VALUES (v_rating_id, p_review_id, p_cleanliness, p_comfort, p_worthiness);
 
-        -- Calculate the total rating for the specific review
-        SELECT SUM(CLEANLINESS_RATE + COMFORT_RATE + WORTHINESS_RATE), COUNT(*)
-        INTO v_total_rating, v_num_ratings
-        FROM RATING
-        WHERE REVIEW_ID = v_review_id;
-
-        -- Calculate the average rating
-        IF v_num_ratings > 0 THEN
-            v_avg_rating := v_total_rating / (v_num_ratings * 3); -- Assuming 3 rating categories
-        ELSE
-            v_avg_rating := 0;
-        END IF;
-
-        -- Update the RATING_SCORE in the Review table
-        UPDATE Review
-        SET RATING_SCORE = ROUND(v_avg_rating, 1)
-        WHERE REVIEW_ID = v_review_id;
-
-        -- COMMIT;
+        COMMIT;
         DBMS_OUTPUT.PUT_LINE('INSERT REVIEW AND RATING SUCCESSFUL');
 
     EXCEPTION
