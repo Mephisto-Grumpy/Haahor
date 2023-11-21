@@ -45,3 +45,76 @@ INSERT INTO REVIEW (REVIEW_ID, USER_ID, DORM_ID, REVIEW_COMMENT) VALUES ('R18', 
 INSERT INTO REVIEW (REVIEW_ID, USER_ID, DORM_ID, REVIEW_COMMENT) VALUES ('R19', 'U02', 'D09', 'ห้องพักเล็กแต่สะอาด');
 INSERT INTO REVIEW (REVIEW_ID, USER_ID, DORM_ID, REVIEW_COMMENT) VALUES ('R20', 'U04', 'D10', 'ใกล้ศูนย์อาหาร แต่เก่าไปหน่อย');
 INSERT INTO REVIEW (REVIEW_ID, USER_ID, DORM_ID, REVIEW_COMMENT) VALUES ('R21', 'U01', 'D10', 'หาของกินง่าย ไปไหนมาไหนสะดวก ห้องพักพอใช้');
+
+-- ======================================================================================================
+-- Procedure
+-- ======================================================================================================
+-- Create sequence
+CREATE SEQUENCE REVIEW_SEQ START WITH 1 INCREMENT BY 1;
+
+CREATE OR REPLACE PROCEDURE insert_review_and_rating (
+    p_review_id IN CHAR DEFAULT NULL,
+    p_user_id IN CHAR,
+    p_dorm_id IN CHAR,
+    p_review_comment IN VARCHAR2,
+    p_cleanliness IN NUMBER,
+    p_comfort IN NUMBER,
+    p_worthiness IN NUMBER
+)
+AS
+    v_rating_id VARCHAR2(20);
+    v_review_id CHAR(10);
+    v_random_number NUMBER;
+    v_total_rating NUMBER;
+    v_num_ratings NUMBER;
+    v_avg_rating FLOAT;
+BEGIN
+    IF p_review_id IS NOT NULL THEN
+        v_review_id := p_review_id;
+    ELSE
+        -- Generate a new review ID if p_review_id is not provided
+        SELECT 'R' || LPAD(REVIEW_SEQ.NEXTVAL, 2, '0') INTO v_review_id FROM DUAL;
+    END IF;
+
+    -- Generating a random number for the rating ID
+    v_random_number := TRUNC(DBMS_RANDOM.VALUE(1000, 10000));
+    v_rating_id := TRIM(v_review_id || '-' || TO_CHAR(v_random_number));
+
+    BEGIN
+        INSERT INTO REVIEW (REVIEW_ID, USER_ID, DORM_ID, REVIEW_COMMENT) VALUES (v_review_id, p_user_id, p_dorm_id, p_review_comment);
+
+        INSERT INTO RATING (RATING_ID, REVIEW_ID, CLEANLINESS_RATE, COMFORT_RATE, WORTHINESS_RATE) VALUES (v_rating_id, v_review_id, p_cleanliness, p_comfort, p_worthiness);
+
+        -- Calculate the total rating for the specific review
+        SELECT SUM(CLEANLINESS_RATE + COMFORT_RATE + WORTHINESS_RATE), COUNT(*)
+        INTO v_total_rating, v_num_ratings
+        FROM RATING
+        WHERE REVIEW_ID = v_review_id;
+
+        -- Calculate the average rating
+        IF v_num_ratings > 0 THEN
+            v_avg_rating := v_total_rating / (v_num_ratings * 3); -- Assuming 3 rating categories
+        ELSE
+            v_avg_rating := 0;
+        END IF;
+
+        -- Update the RATING_SCORE in the Review table
+        UPDATE Review
+        SET RATING_SCORE = ROUND(v_avg_rating, 1)
+        WHERE REVIEW_ID = v_review_id;
+
+        -- COMMIT;
+        DBMS_OUTPUT.PUT_LINE('INSERT REVIEW AND RATING SUCCESSFUL');
+
+    EXCEPTION
+        WHEN OTHERS THEN
+            ROLLBACK;
+            DBMS_OUTPUT.PUT_LINE('ERROR: ' || SQLCODE || ' ' || SQLERRM);
+    END;
+END;
+
+-- Use the procedure
+EXECUTE insert_review_and_rating('R22', 'U01', 'D07', 'ห้องพักสะอาด ปลอดภัย สะดวกสบาย จอดรถง่าย เงียบสงบ', 5, 5, 5);
+EXECUTE insert_review_and_rating('R23', 'U02', 'D10', 'เปลี่ยว ลึก น่ากลัว แต่ สะดวก และ ถูก', 3, 3, 3);
+EXECUTE insert_review_and_rating('R24', 'U03', 'D08', 'ไม่มีที่จอดรถ ลึก แต่หาของกินง่าย', 2, 2, 2);
+EXECUTE insert_review_and_rating('R25', 'U04', 'D09', 'ห้องพักสบาย แค่แพงไปหน่อย', 1, 1, 1);
