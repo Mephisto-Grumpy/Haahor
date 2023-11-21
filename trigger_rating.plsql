@@ -9,17 +9,11 @@ DECLARE
     PRAGMA AUTONOMOUS_TRANSACTION;
     v_total_rating NUMBER;
     v_num_ratings NUMBER;
-    v_avg_rating NUMBER;
+    v_avg_rating FLOAT;
 BEGIN
     -- Calculate the total rating for the specific review
-    SELECT SUM(CLEANLINESS_RATE + COMFORT_RATE + WORTHINESS_RATE)
-    INTO v_total_rating
-    FROM Rating
-    WHERE REVIEW_ID = :NEW.REVIEW_ID;
-
-    -- Count the number of ratings for the specific review
-    SELECT COUNT(*)
-    INTO v_num_ratings
+    SELECT SUM(CLEANLINESS_RATE + COMFORT_RATE + WORTHINESS_RATE), NVL(COUNT(*), 0)
+    INTO v_total_rating, v_num_ratings
     FROM Rating
     WHERE REVIEW_ID = :NEW.REVIEW_ID;
 
@@ -32,7 +26,7 @@ BEGIN
 
     -- Update the Review table with the calculated average rating
     UPDATE Review
-    SET RATING_SCORE = v_avg_rating
+    SET RATING_SCORE = ROUND(v_avg_rating, 1)
     WHERE REVIEW_ID = :NEW.REVIEW_ID;
 
     -- Commit the changes in the autonomous transaction
@@ -41,10 +35,12 @@ END;
 
 -- IF HAVE DATA IN TABLE
 UPDATE Review R
-SET RATING_SCORE = (
-    SELECT NVL(AVG(RATING_SCORE), 0)
-    FROM Rating R2
-    WHERE R2.REVIEW_ID = R.REVIEW_ID
+SET RATING_SCORE = ROUND(
+    (
+        SELECT NVL(AVG(R.RATING_SCORE), 0)
+        FROM Rating R2
+        WHERE R2.REVIEW_ID = R.REVIEW_ID
+    ), 1
 );
 
 -- ======================================================================================================
@@ -58,10 +54,10 @@ DECLARE
     PRAGMA AUTONOMOUS_TRANSACTION;
     v_total_rating NUMBER;
     v_num_ratings NUMBER;
-    v_avg_rating NUMBER;
+    v_avg_rating FLOAT;
 BEGIN
     -- Calculate the total rating and count for the specific dormitory
-    SELECT NVL(SUM(RATING), 0), NVL(COUNT(*), 0)
+    SELECT NVL(SUM(RATING_SCORE), 0), NVL(COUNT(*), 0)
     INTO v_total_rating, v_num_ratings
     FROM Review
     WHERE DORM_ID = :NEW.DORM_ID;
@@ -75,7 +71,7 @@ BEGIN
 
     -- Update the Dormitory table with the calculated average rating
     UPDATE Dormitory
-    SET RATING_SCORE = v_avg_rating
+    SET RATING_SCORE = ROUND(v_avg_rating, 1)
     WHERE DORM_ID = :NEW.DORM_ID;
 
     -- Commit the changes in the autonomous transaction
@@ -87,10 +83,12 @@ END;
 
 -- IF HAVE DATA IN TABLE
 UPDATE Dormitory D
-SET RATING_SCORE = (
-    SELECT NVL(AVG(RATING_SCORE), 0)
-    FROM Review R
-    WHERE R.DORM_ID = D.DORM_ID
+SET RATING_SCORE = ROUND(
+    (
+        SELECT NVL(AVG(RATING_SCORE), 0)
+        FROM Review R
+        WHERE R.DORM_ID = D.DORM_ID
+    ), 1
 );
 
 -- ======================================================================================================
